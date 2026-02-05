@@ -1,27 +1,53 @@
 ## MySQL Database Design
 
-patients
+### Table: patients
+- patient_id: INT, Primary key, Auto Increment
+- patient_name: STRING
+- patiend_age: INT
+- patiend_genre: CHAR (M=male, F=female, O=other)
+- patiend_phone: STRING
+- patiend_address: STRING
 
-doctors
+### Table: doctors
+- doctor_id: INT, Primary Key, Auto Increment
+- doctor_name: STRING
+- doctor_speciality: STRING
+- doctor_phone: STRING
+- doctor_status: CHAR (A=active, I=inactive)
 
-appointments
 ### Table: appointments
-- id: INT, Primary Key, Auto Increment
+- appointment_id: INT, Primary Key, Auto Increment
 - doctor_id: INT, Foreign Key → doctors(id)
 - patient_id: INT, Foreign Key → patients(id)
 - appointment_time: DATETIME, Not Null
-- status: INT (0 = Scheduled, 1 = Completed, 2 = Cancelled)
+- appointment_status: CHAR (0 = Scheduled, 1 = Completed, 2 = Cancelled)
+- payment_id: INT, Foreing key -> payments (id)
+- appointment_clinic: INT, Foreign Key -> clinics (id)
 
-admin
+### Table: admin
+- admin_user: STRING, Primary key
+- admin_name: STRING
+- admin_rol: CHAR (A=administrator, D=doctor, O=operator)
+- admin_status: CHAR (A=active, I=inactive)
+- admin_time: DATETIME
 
-clinic_locations
+### Table: clinics
+- clinic_id: INT, Primary Key, Auto Increment
+- clinic_name: STRING
+- clinic_phone: STRING
+- clinic_adress: STRING
+- clinic_status: CHAR (A=active, I=inactive)
 
-payments
+### Table: payments
+- payment_id: INT, Primary Key, Auto Increment
+- payment_amount: FLOAT
+- payment_status: CHAR (0=due, 1=settled, 2=cancelled)
+- payment_time: DATETIME, Not Null
 
 
 ## MongoDB Collection Design
 
-prescripciones, comentarios, registros o mensajes
+prescriptions
 
 {
   "prescriptionId": "12345",
@@ -50,19 +76,17 @@ prescripciones, comentarios, registros o mensajes
   "notes": "Patient should take medication with food."
 }
 
-### Collection: prescriptions
-```json
+messages
+
 {
-  "_id": "ObjectId('64abc123456')",
-  "patientName": "John Smith",
-  "appointmentId": 51,
-  "medication": "Paracetamol",
-  "dosage": "500mg",
-  "doctorNotes": "Tome 1 tableta cada 6 horas.",
-  "refillCount": 2,
-  "pharmacy": {
-    "name": "Walgreens SF",
-    "location": "Market Street"
-  }
+  "message_id": "12345",
+  "origin": "67890",
+  "origin_type": "Operator",
+  "destiny": "111213",
+  "destiny_type": "Doctor",
+  "content_type": "Remember",
+  "content": "A request…"
+  "createdAt": "2023-10-02T12:00:00Z"
 }
+
 
