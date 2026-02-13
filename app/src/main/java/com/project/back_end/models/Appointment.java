@@ -1,5 +1,21 @@
 package com.project.back_end.models;
 
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Future;
+
 @Entity
 public class Appointment {
 
@@ -14,8 +30,8 @@ public class Appointment {
 //      - The @Id annotation marks it as the primary key.
 //      - The @GeneratedValue(strategy = GenerationType.IDENTITY) annotation auto-generates the ID value when a new record is inserted into the database.
 
-      @id
-      @GeneratedValue (stretegy = GenerationType.IDENTITY)
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
       private Long id;
 
 // 2. 'doctor' field:
@@ -68,8 +84,8 @@ public class Appointment {
 //      - It calculates the end time of the appointment by adding one hour to the start time (appointmentTime).
 //      - It is used to get an estimated appointment end time for display purposes.
 
-      @Transient // devuelve la hora de finalización de la cita, 1 hora despues de la hora de inicio
-      public LocalDateTime getEndTime () {
+      //@Transient // devuelve la hora de finalización de la cita, 1 hora despues de la hora de inicio
+      private LocalDateTime getEndTime () {
           return appointmentTime.plusHours (1);
       }
 
@@ -79,8 +95,8 @@ public class Appointment {
 //      - This method extracts only the date part from the appointmentTime field.
 //      - It returns a LocalDate object representing just the date (without the time) of the scheduled appointment.
 
-    @Transient
-    public getAppointmentDate () { // devuelve solo la fecha de la cita
+    //@Transient
+    private LocalDate getAppointmentDate () { // devuelve solo la fecha de la cita
         return appointmentTime.toLocalDate();
     }
 
@@ -90,9 +106,9 @@ public class Appointment {
 //      - This method extracts only the time part from the appointmentTime field.
 //      - It returns a LocalTime object representing just the time (without the date) of the scheduled appointment.
 
-      @Transient
-      public getAppointmentTimeOnly () { // devuelve solo la hora de la cita
-          return appointmenTime.toLocalTime();
+      //@Transient
+      private LocalTime getAppointmentTimeOnly () { // devuelve solo la hora de la cita
+          return appointmentTime.toLocalTime();
       }
 
 // 9. Constructor(s):
@@ -102,7 +118,7 @@ public class Appointment {
   public Appointment (Long id, Doctor doctor, Patient patient, LocalDateTime appointmentTime, int status) {
         this.id = id;
         this.doctor = doctor;
-        this.pattient = patient;
+        this.patient = patient;
         this.appointmentTime = appointmentTime;
         this.status = status;
     }
@@ -117,7 +133,7 @@ public class Appointment {
         this.id = id;
     }
 
-    public Long getDoctor() {
+    public Doctor getDoctor() {
         return doctor;
     }
 
@@ -125,7 +141,7 @@ public class Appointment {
         this.doctor = doctor;
     }
 
-    public Long getPatient() {
+    public Patient getPatient() {
         return patient;
     }
 
@@ -133,7 +149,7 @@ public class Appointment {
         this.patient = patient;
     }
 
-    public Long getAppointmentTime() {
+    public LocalDateTime getAppointmentTime() {
         return appointmentTime;
     }
 
@@ -141,11 +157,11 @@ public class Appointment {
         this.appointmentTime = appointmentTime;
     }
 
-    public Long getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Int status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 }
