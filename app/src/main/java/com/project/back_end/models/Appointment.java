@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
+@Table(name = "appointment_dt")
 public class Appointment {
 
   // @Entity annotation:
@@ -42,7 +43,8 @@ public class Appointment {
 //      - The @NotNull annotation ensures that an appointment must be associated with a doctor when created.
 
       @ManyToOne
-      @NotNull
+      @NotNull (message = "Id de doctor debe ser asignado a la cita")
+      @JoinColumn(name = "doctor_id", nullable = false)
       private Doctor doctor;
 
 // 3. 'patient' field:
@@ -53,7 +55,7 @@ public class Appointment {
 //      - The @NotNull annotation ensures that an appointment must be associated with a patient when created.
 
     @ManyToOne
-    @NotNull
+    @NotNull (message = "Id de paciente debe ser asignado a la cita")
     private Patient patient;
 
 // 4. 'appointmentTime' field:
@@ -64,6 +66,7 @@ public class Appointment {
 //      - It uses LocalDateTime, which includes both the date and time for the appointment.
 
       @Future (message = "La hora de la cita debe ser en el futuro")
+      @NotNull(message = "Hora de la cita debe ser informado")
       private LocalDateTime appointmentTime;
 
 // 5. 'status' field:
@@ -74,7 +77,8 @@ public class Appointment {
 //        - 1 means the appointment has been completed.
 //      - The @NotNull annotation ensures that the status field is not null.
 
-      @NotNull
+      @NotNull (message = "Estatus de la cita debe ser informado")
+      @Column(nullable = false)
       private int status; // 0 = shedule, 1 = completed
 
 // 6. 'getEndTime' method:
@@ -84,7 +88,7 @@ public class Appointment {
 //      - It calculates the end time of the appointment by adding one hour to the start time (appointmentTime).
 //      - It is used to get an estimated appointment end time for display purposes.
 
-      //@Transient // devuelve la hora de finalización de la cita, 1 hora despues de la hora de inicio
+      @Transient // devuelve la hora de finalización de la cita, 1 hora despues de la hora de inicio
       private LocalDateTime getEndTime () {
           return appointmentTime.plusHours (1);
       }
@@ -95,7 +99,7 @@ public class Appointment {
 //      - This method extracts only the date part from the appointmentTime field.
 //      - It returns a LocalDate object representing just the date (without the time) of the scheduled appointment.
 
-    //@Transient
+    @Transient
     private LocalDate getAppointmentDate () { // devuelve solo la fecha de la cita
         return appointmentTime.toLocalDate();
     }
@@ -106,7 +110,7 @@ public class Appointment {
 //      - This method extracts only the time part from the appointmentTime field.
 //      - It returns a LocalTime object representing just the time (without the date) of the scheduled appointment.
 
-      //@Transient
+      @Transient
       private LocalTime getAppointmentTimeOnly () { // devuelve solo la hora de la cita
           return appointmentTime.toLocalTime();
       }
@@ -114,6 +118,10 @@ public class Appointment {
 // 9. Constructor(s):
 //    - A no-argument constructor is implicitly provided by JPA for entity creation.
 //    - A parameterized constructor can be added as needed to initialize fields.
+
+    // Default constructor required by JPA
+    public Appointment() {
+    }
 
   public Appointment (Long id, Doctor doctor, Patient patient, LocalDateTime appointmentTime, int status) {
         this.id = id;
