@@ -1,5 +1,21 @@
 package com.project.back_end.models;
 
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Future;
+
 @Document (collection = "prescriptions")
 public class Prescription {
 
@@ -15,7 +31,7 @@ public class Prescription {
 //      - The id is of type String, which is commonly used for MongoDB's ObjectId as it stores IDs as strings in the database.
 
       @Id
-      @GeneratedValue (stretegy = GenerationType.IDENTITY)
+      @GeneratedValue (strategy = GenerationType.IDENTITY)
       private String id;
 
 // 2. 'patientName' field:
@@ -26,7 +42,7 @@ public class Prescription {
 //      - The @Size(min = 3, max = 100) annotation ensures that the name length is between 3 and 100 characters, ensuring a reasonable name length.
 
       @NotNull
-      @Size (min = 3, max = 100)
+      @Size(min = 3, max = 100)
       private String patientName;
 
 // 3. 'appointmentId' field:
@@ -46,7 +62,7 @@ public class Prescription {
 //      - The @Size(min = 3, max = 100) annotation ensures that the medication name is between 3 and 100 characters, which ensures meaningful medication names.
 
       @NotNull
-      @Size (min = 3, max = 100)
+      @Size(min = 3, max = 100)
       private String medication;
   
 // 5. 'dosage' field:
@@ -56,7 +72,7 @@ public class Prescription {
 //      - The @NotNull annotation ensures that the dosage information is provided.
 
       @NotNull
-      @Size (min = 3, max = 20)
+      @Size(min = 3, max = 20)
       private String dosage;
 
 // 6. 'doctorNotes' field:
@@ -65,15 +81,15 @@ public class Prescription {
 //      - Represents any additional notes or instructions from the doctor regarding the prescription.
 //      - The @Size(max = 200) annotation ensures that the doctor's notes do not exceed 200 characters, providing a reasonable limit for additional notes.
 
-      @Size (max = 200)
+      @Size(max = 200)
       private String doctorNotes;
 
 // 7. Constructors:
 //    - The class includes a no-argument constructor (default constructor) and a parameterized constructor that initializes the fields: patientName, medication, dosage, doctorNotes, and appointmentId.
 
-      public Prescription (Long id, String patientName, Long appointmentId, String medication, String dosage, String doctorNotes) {
+      public Prescription (String id, String patientName, Long appointmentId, String medication, String dosage, String doctorNotes) {
         this.id = id;
-        this.patiendName = patientName;
+        this.patientName = patientName;
         this.appointmentId = appointmentId;
         this.medication = medication;
         this.dosage = dosage;
@@ -84,7 +100,7 @@ public class Prescription {
 //    - Standard getter and setter methods are provided for all fields: id, patientName, medication, dosage, doctorNotes, and appointmentId.
 //    - These methods allow access and modification of the fields of the Prescription class.
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -92,7 +108,7 @@ public class Prescription {
         this.id = id;
     }
 
-    public Long getPatientName() {
+    public String getPatientName() {
         return patientName;
     }
 
@@ -108,7 +124,7 @@ public class Prescription {
         this.appointmentId = appointmentId;
     }
 
-    public Long getMedication() {
+    public String getMedication() {
         return medication;
     }
 
@@ -116,7 +132,7 @@ public class Prescription {
         this.medication = medication;
     }
 
-    public Long getDosage() {
+    public String getDosage() {
         return dosage;
     }
 
@@ -124,7 +140,7 @@ public class Prescription {
         this.dosage = dosage;
     }
 
-    public Long getDoctorNotes() {
+    public String getDoctorNotes() {
         return doctorNotes;
     }
 
