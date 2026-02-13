@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.Valid;
@@ -41,7 +42,7 @@ public class Prescription {
 //      - The @NotNull annotation ensures that the patient name is required.
 //      - The @Size(min = 3, max = 100) annotation ensures that the name length is between 3 and 100 characters, ensuring a reasonable name length.
 
-      @NotNull
+      @NotNull (message = "Nombre del paciente debe ser informado")
       @Size(min = 3, max = 100)
       private String patientName;
 
@@ -51,7 +52,7 @@ public class Prescription {
 //      - Represents the ID of the associated appointment where the prescription was given.
 //      - The @NotNull annotation ensures that the appointment ID is required for the prescription.
 
-      @NotNull
+      @NotNull (message = "Id de la cita debe ser informado")
       private Long appointmentId;
 
 // 4. 'medication' field:
@@ -61,7 +62,7 @@ public class Prescription {
 //      - The @NotNull annotation ensures that the medication name is required.
 //      - The @Size(min = 3, max = 100) annotation ensures that the medication name is between 3 and 100 characters, which ensures meaningful medication names.
 
-      @NotNull
+      @NotNull (message = "Medicinas recetadas deben ser informadas")
       @Size(min = 3, max = 100)
       private String medication;
   
@@ -71,7 +72,7 @@ public class Prescription {
 //      - Represents the dosage information for the prescribed medication.
 //      - The @NotNull annotation ensures that the dosage information is provided.
 
-      @NotNull
+      @NotNull (message = "Dosis de las medicinas recetadas debe ser informada")
       @Size(min = 3, max = 20)
       private String dosage;
 
@@ -81,12 +82,16 @@ public class Prescription {
 //      - Represents any additional notes or instructions from the doctor regarding the prescription.
 //      - The @Size(max = 200) annotation ensures that the doctor's notes do not exceed 200 characters, providing a reasonable limit for additional notes.
 
-      @Size(max = 200)
+      @Size(max = 200, message = "Instrucciones para el tratamiento deben ser informadas") 
       private String doctorNotes;
 
 // 7. Constructors:
 //    - The class includes a no-argument constructor (default constructor) and a parameterized constructor that initializes the fields: patientName, medication, dosage, doctorNotes, and appointmentId.
 
+// Default constructor required by Spring Data
+    public Prescription() {
+    }
+    
       public Prescription (String id, String patientName, Long appointmentId, String medication, String dosage, String doctorNotes) {
         this.id = id;
         this.patientName = patientName;
