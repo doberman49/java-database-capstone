@@ -1,6 +1,20 @@
 package com.project.back_end.models;
-import net.bytebuddy.build.HashCodeAndEqualsPlugin;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Future;
 
 @Entity
 public class Admin {
@@ -26,7 +40,7 @@ public class Admin {
 //      - Used to log into the system.
 //      - @NotNull validation ensures that this field cannot be null when creating or updating an Admin.
 
-      @NotNull (message = "Nombre de usuario no puede ser nulo");
+      @NotNull (message = "Nombre de usuario no puede ser nulo")
       private String username;
 
 // 3. 'password' field:
@@ -36,7 +50,7 @@ public class Admin {
 //      - The field is marked with @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) to prevent the password from being exposed in JSON responses.
 //      - @NotNull validation ensures the password cannot be null when creating or updating an Admin.
 
-      @NotNull (message = "Contraseña no puede ser nulo");
+      @NotNull (message = "Contraseña no puede ser nulo")
       @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
       private String password;
 
@@ -60,19 +74,19 @@ public class Admin {
         this.id = id;
     }
 
-    public Long getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsernameId(Long id) {
+    public void setUsernameId(String username) {
         this.username = username;
     }
 
-    public Long getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(Long id) {
+    public void setPassword(String password) {
         this.password = password;
     } 
 }
