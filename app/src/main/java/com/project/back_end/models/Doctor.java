@@ -1,5 +1,21 @@
 package com.project.back_end.models;
 
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Future;
+
 @Entity
 public class Doctor {
 
@@ -15,7 +31,7 @@ public class Doctor {
 //      - The @GeneratedValue(strategy = GenerationType.IDENTITY) annotation auto-generates the ID value when a new record is inserted into the database.
 
       @Id
-      @GeneratedValue (stretegy = GenerationType.IDENTITY)
+      @GeneratedValue (strategy = GenerationType.IDENTITY)
       private long id;
 
 // 2. 'name' field:
@@ -62,7 +78,7 @@ public class Doctor {
 
       @NotNull
       @Size (min = 6)
-      @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
+      @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
       private String password;
 
 // 6. 'phone' field:
@@ -73,7 +89,7 @@ public class Doctor {
 //      - The @Pattern(regexp = "^[0-9]{10}$") annotation validates that the phone number must be exactly 10 digits long.
 
       @NotNull
-      @Pattern (regexp = "^[0-9]{10}$", message = "Número de telefon debe ser de 10 digitos")
+      @Pattern(regexp = "^[0-9]{10}$", message = "Número de telefon debe ser de 10 digitos")
       private String phone;
 
 // 7. 'availableTimes' field:
@@ -97,15 +113,15 @@ public class Doctor {
         this.id = id;
     }
 
-    public Long getName() {
+    public String getName() {
         return name;
     }
 
-    public void setNane(Long id) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Long getSpeciality() {
+    public String getSpeciality() {
         return speciality;
     }
 
@@ -113,7 +129,7 @@ public class Doctor {
         this.speciality = speciality;
     }
 
-    public Long getEmail() {
+    public String getEmail() {
         return email;
     }
 
@@ -121,7 +137,7 @@ public class Doctor {
         this.email = email;
     }
 
-    public Long getPassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -129,7 +145,7 @@ public class Doctor {
         this.password = password;
     }
 
-    public Long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
@@ -137,7 +153,7 @@ public class Doctor {
         this.phone = phone;
     }
 
-    public Long getAvailableTimes() {
+    public List<String> getAvailableTimes() {
         return availableTimes;
     }
 
