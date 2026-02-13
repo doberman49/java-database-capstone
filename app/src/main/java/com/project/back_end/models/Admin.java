@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.Valid;
@@ -17,8 +18,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
+@Table(name = "admin_dt")
 public class Admin {
-
 // @Entity annotation:
 //    - Marks the class as a JPA entity, which means it represents a table in the database.
 //    - It is required for persistence frameworks like Hibernate to map the class to a database table.
@@ -41,6 +42,7 @@ public class Admin {
 //      - @NotNull validation ensures that this field cannot be null when creating or updating an Admin.
 
       @NotNull (message = "Nombre de usuario no puede ser nulo")
+      @Column(nullable = false, unique = true)
       private String username;
 
 // 3. 'password' field:
@@ -52,13 +54,18 @@ public class Admin {
 
       @NotNull (message = "Contraseña no puede ser nulo")
       @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
+      @Column(nullable = false)
       private String password;
 
 // 4. Constructor(s):
 //    - A no-argument constructor is implicitly provided, required by JPA for entity creation.
 //    - A parameterized constructor can be added as needed.
 
-  public Admin (Long id, String username, String password) {
+// Default constructor required by JPA
+    public Admin() {
+    }
+
+    public Admin (Long id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
