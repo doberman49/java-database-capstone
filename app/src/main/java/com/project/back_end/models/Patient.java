@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
+@Table(name = "patient_dt")
 public class Patient {
 // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.
@@ -41,8 +43,9 @@ public class Patient {
 //      - The @Size(min = 3, max = 100) annotation ensures that the name length is between 3 and 100 characters. 
 //      - Provides validation for correct input and user experience.
 
-    @NotNull
+    @NotNull (message = "Nombre del paciente es requerido")
     @Size (min = 3, max = 100)
+    @Column(nullable = false)
     private String name;
 
 // 3. 'email' field:
@@ -52,8 +55,9 @@ public class Patient {
 //      - The @NotNull annotation ensures that an email address must be provided.
 //      - The @Email annotation validates that the email address follows a valid email format (e.g., patient@example.com).
 
-      @Email
-      @NotNull
+      @Email (message = "Email del paciente invalido")
+      @NotNull (message = "Email del paciente debe ser informado")
+      @Column(nullable = false, unique = true)
       private String email;
 
 // 4. 'password' field:
@@ -63,8 +67,10 @@ public class Patient {
 //      - The @NotNull annotation ensures that a password must be provided.
 //      - The @Size(min = 6) annotation ensures that the password must be at least 6 characters long.
 
+      @NotNull(message = "Contraseña del paciente debe ser informada")
       @Size (min = 6)
       @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
+      @Column(nullable = false)
       private String password;
 
 // 5. 'phone' field:
@@ -74,8 +80,9 @@ public class Patient {
 //      - The @NotNull annotation ensures that a phone number must be provided.
 //      - The @Pattern(regexp = "^[0-9]{10}$") annotation validates that the phone number must be exactly 10 digits long.
 
-      @NotNull
+      @NotNull (message = "Telefono del paciente debe ser informado")
       @Pattern (regexp = "^[0-9]{10}$", message = "Número de telefon debe ser de 10 digitos")
+      @Column(nullable = false, unique = true)
       private String phone;
 
 // 6. 'address' field:
@@ -85,10 +92,24 @@ public class Patient {
 //      - The @NotNull annotation ensures that the address must be provided.
 //      - The @Size(max = 255) annotation ensures that the address does not exceed 255 characters in length, providing validation for the address input.
 
-      @NotNull
+      @NotNull (message = "Direccion del paciente debe ser informada")
       @Size (max = 255)
+      @Column(nullable = false)
       private String address;
 
+    // Default constructor required by JPA
+    public Patient() {
+    }
+
+    // Parameterized constructor
+    public Patient(String name, String email, String password, String phone, String address) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.address = address;
+    }
+    
 // 7. Getters and Setters:
 //    - Standard getter and setter methods are provided for all fields: id, name, email, password, phone, and address.
 //    - These methods allow access and modification of the fields of the Patient class.
