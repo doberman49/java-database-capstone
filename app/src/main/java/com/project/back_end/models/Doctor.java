@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
+@Table(name = "doctor_dt")
 public class Doctor {
 
 // @Entity annotation:
@@ -42,8 +44,9 @@ public class Doctor {
 //      - The @Size(min = 3, max = 100) annotation ensures that the name length is between 3 and 100 characters. 
 //      - Provides validation for correct input and user experience.
 
-    @NotNull
+    @NotNull (message = "Nombre de doctor debe ser informado")
     @Size (min = 3, max = 100)
+    @Column(nullable = false)
     private String name;
 
 // 3. 'specialty' field:
@@ -53,8 +56,9 @@ public class Doctor {
 //      - The @NotNull annotation ensures that a specialty must be provided.
 //      - The @Size(min = 3, max = 50) annotation ensures that the specialty name is between 3 and 50 characters long.
 
-      @NotNull
+      @NotNull (message = "Especialidad de doctor debe ser informado")
       @Size (min = 3, max = 50)
+    @Column(nullable = false)
       private String speciality;
 
 // 4. 'email' field:
@@ -64,8 +68,9 @@ public class Doctor {
 //      - The @NotNull annotation ensures that an email address is required.
 //      - The @Email annotation validates that the email address follows a valid email format (e.g., doctor@example.com).
 
-      @Email
-      @NotNull
+      @Email (message = "Email de doctor invalido")
+      @NotNull (message = "Email de doctor debe ser informado")
+      @Column(nullable = false, unique = true)
       private String email;
 
 // 5. 'password' field:
@@ -76,9 +81,10 @@ public class Doctor {
 //      - The @Size(min = 6) annotation ensures that the password must be at least 6 characters long.
 //      - The @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) annotation ensures that the password is not serialized in the response (hidden from the frontend).
 
-      @NotNull
+      @NotNull (message = "Contraseña de doctor debe ser informado")
       @Size (min = 6)
       @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+      @Column(nullable = false)
       private String password;
 
 // 6. 'phone' field:
@@ -88,8 +94,9 @@ public class Doctor {
 //      - The @NotNull annotation ensures that a phone number must be provided.
 //      - The @Pattern(regexp = "^[0-9]{10}$") annotation validates that the phone number must be exactly 10 digits long.
 
-      @NotNull
+      @NotNull (message = "Telefono de doctor debe ser informado")
       @Pattern(regexp = "^[0-9]{10}$", message = "Número de telefon debe ser de 10 digitos")
+      @Column(nullable = false, unique = true)
       private String phone;
 
 // 7. 'availableTimes' field:
@@ -100,8 +107,23 @@ public class Doctor {
 //      - The @ElementCollection annotation ensures that the list of time slots is stored as a separate collection in the database.
 
       @ElementCollection
+      @CollectionTable(name = "doctor_available_times_dt", joinColumns = @JoinColumn(name = "doctor_id"))
+      @Column(name = "time_slot")
       private List<String> availableTimes; // franjas horarias disponibles, v.g.r. "09:00 - 10:00"
 
+      // Default constructor required by JPA
+        public Doctor() {
+        }
+
+        // Parameterized constructor for convenience
+    public Doctor(String name, String speciality, String email, String password, String phone, List<String> availableTimes) {
+        this.name = name;
+        this.speciality = speciality;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.availableTimes = availableTimes;
+    }
 // 8. Getters and Setters:
 //    - Standard getter and setter methods are provided for all fields: id, name, specialty, email, password, phone, and availableTimes.
 
