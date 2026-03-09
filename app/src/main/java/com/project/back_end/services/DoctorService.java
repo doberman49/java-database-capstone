@@ -82,7 +82,7 @@ public class DoctorService {
         doctor.setName(updated.getName());
         doctor.setEmail(updated.getEmail());
         doctor.setPhone(updated.getPhone());
-        doctor.setSpecialty(updated.getSpecialty());
+        doctor.setSpeciality(updated.getSpeciality());
         doctor.setAvailableTimes(updated.getAvailableTimes());
 
         doctorRepository.save(doctor);
