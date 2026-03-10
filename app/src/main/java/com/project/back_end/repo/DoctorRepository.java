@@ -16,10 +16,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findByNameLike(String name);
 
     // 3. Find doctors by name (contains, ignore case) and specialty (exact match, ignore case)
-    List<Doctor> findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(String name, String specialty);
+    List<Doctor> findByNameContainingIgnoreCaseAndSpecialityIgnoreCase(String name, String speciality);
 
     // 4. Find doctors by specialty (case-insensitive)
-    List<Doctor> findBySpecialtyIgnoreCase(String specialty);
+    List<Doctor> findBySpecialtyIgnoreCase(String speciality);
 }
 
 //public interface DoctorRepository {
