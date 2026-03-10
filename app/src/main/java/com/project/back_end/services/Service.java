@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Optional;
 
 //@Service // 1. Spring-managed service component
+//rafiky-ini
+@Service
+//rafiky-end
 public class Service {
 
     public final TokenService tokenService;
@@ -71,23 +74,23 @@ public class Service {
     }
 
     // 5. Filter doctors by name, specialty, and time
-    public List<Doctor> filterDoctor(String name, String specialty, String time) {
-        if (name != null && specialty != null && time != null) {
-            return doctorService.filterDoctorsByNameSpecialtyAndTime(name, specialty, time);
-        } else if (name != null && specialty != null) {
-            return doctorService.filterDoctorByNameAndSpecialty(name, specialty);
+    public List<Doctor> filterDoctor(String name, String speciality, String time) {
+        if (name != null && speciality != null && time != null) {
+            return doctorService.filterDoctorsByNameSpecialityAndTime(name, speciality, time);
+        } else if (name != null && speciality != null) {
+            return doctorService.filterDoctorByNameAndSpeciality(name, speciality);
         } else if (name != null && time != null) {
             return doctorService.filterDoctorByNameAndTime(name, time);
         } else if (specialty != null && time != null) {
-            return doctorService.filterDoctorByTimeAndSpecialty(specialty, time);
+            return doctorService.filterDoctorByTimeAndSpeciality(speciality, time);
         } else if (name != null) {
             return doctorService.findDoctorByName(name);
         } else if (specialty != null) {
-            return doctorService.filterDoctorBySpecialty(specialty);
+            return doctorService.filterDoctorBySpeciality(speciality);
         } else if (time != null) {
             return doctorService.filterDoctorsByTime(time);
         } else {
-            return doctorService.getDoctors();
+            return doctorService.getDoctors();    
         }
     }
 
