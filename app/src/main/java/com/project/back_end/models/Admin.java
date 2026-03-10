@@ -19,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
-@Table(name = "admin_dt")
+@Table(name = "admin")
 public class Admin {
 // @Entity annotation:
 //    - Marks the class as a JPA entity, which means it represents a table in the database.
