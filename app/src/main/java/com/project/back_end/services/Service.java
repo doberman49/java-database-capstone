@@ -20,7 +20,7 @@ import java.util.Optional;
 
 //@Service // 1. Spring-managed service component
 //rafiky-ini
-@Service
+//@Service
 //rafiky-end
 public class Service {
 
