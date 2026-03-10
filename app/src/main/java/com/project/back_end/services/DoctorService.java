@@ -126,8 +126,8 @@ public class DoctorService {
 
     // 11. Filter by name, specialty, and time
     @Transactional
-    public List<Doctor> filterDoctorsByNameSpecialtyAndTime(String name, String specialty, String timePeriod) {
-        List<Doctor> doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
+    public List<Doctor> filterDoctorsByNameSpecialityAndTime(String name, String speciality, String timePeriod) {
+        List<Doctor> doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialityIgnoreCase(name, speciality);
         return filterDoctorsByTime(doctors, timePeriod);
     }
 
@@ -151,21 +151,21 @@ public class DoctorService {
 
     // 14. Filter by name and specialty
     @Transactional
-    public List<Doctor> filterDoctorByNameAndSpecialty(String name, String specialty) {
-        return doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
+    public List<Doctor> filterDoctorByNameAndSpeciality(String name, String speciality) {
+        return doctorRepository.findByNameContainingIgnoreCaseAndSpecialityIgnoreCase(name, speciality);
     }
 
     // 15. Filter by specialty and time
     @Transactional
-    public List<Doctor> filterDoctorByTimeAndSpecialty(String specialty, String timePeriod) {
-        List<Doctor> doctors = doctorRepository.findBySpecialtyIgnoreCase(specialty);
+    public List<Doctor> filterDoctorByTimeAndSpeciality(String speciality, String timePeriod) {
+        List<Doctor> doctors = doctorRepository.findBySpecialityIgnoreCase(speciality);
         return filterDoctorsByTime(doctors, timePeriod);
     }
 
     // 16. Filter by specialty
     @Transactional
-    public List<Doctor> filterDoctorBySpecialty(String specialty) {
-        return doctorRepository.findBySpecialtyIgnoreCase(specialty);
+    public List<Doctor> filterDoctorBySpeciality(String speciality) {
+        return doctorRepository.findBySpecialityIgnoreCase(speciality);
     }
 
     // 17. Filter all doctors by time availability
