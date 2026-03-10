@@ -85,7 +85,7 @@ public class Service {
             return doctorService.filterDoctorByTimeAndSpeciality(speciality, time);
         } else if (name != null) {
             return doctorService.findDoctorByName(name);
-        } else if (specialty != null) {
+        } else if (speciality != null) {
             return doctorService.filterDoctorBySpeciality(speciality);
         } else if (time != null) {
             return doctorService.filterDoctorsByTime(time);
