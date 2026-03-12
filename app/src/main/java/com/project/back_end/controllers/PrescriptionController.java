@@ -6,14 +6,12 @@ import com.project.back_end.services.PrescriptionService;
 import com.project.back_end.services.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 import java.util.Map;
 
 @RestController
 @RequestMapping("${api.path}prescription")
 public class PrescriptionController {
-
     private final PrescriptionService prescriptionService;
     private final Service service;
     private final AppointmentService appointmentService;
@@ -35,7 +33,6 @@ public class PrescriptionController {
         if (prescription.getAppointmentId() != null) {
             appointmentService.changeStatus(1, prescription.getAppointmentId());
         }
-
         return prescriptionService.savePrescription(prescription);
     }
 
