@@ -19,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
-@Table(name = "patient")
+@Table(name = "patients")
 public class Patient {
 // @Entity annotation:
 //    - Marks the class as a JPA entity, meaning it represents a table in the database.
