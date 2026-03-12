@@ -3,107 +3,70 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.Service;
-//import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.time.LocalDate;
-import java.util.List;
-import java.lang.*;
-import java.util.*;
+import java.util.Map;
 
-@RestController // 1. Mark as REST controller
-@RequestMapping("/appointments") // Base path for appointment operations
+@RestController
+@RequestMapping("${api.path}appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
     private final Service service;
 
-    // 2. Constructor injection
-    //@Autowired
     public AppointmentController(AppointmentService appointmentService, Service service) {
         this.appointmentService = appointmentService;
         this.service = service;
     }
 
-    // 3. Get appointments for doctor by date and optional patient name
-    @GetMapping("/{token}/{date}")
-    public ResponseEntity<?> getAppointments(
-            @PathVariable String token,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(required = false) String patientName
+    @GetMapping("/{date}/{patientName}/{token}")
+    public ResponseEntity<Map<String, Object>> getAppointments(
+            @PathVariable String date,
+            @PathVariable String patientName,
+            @PathVariable String token
     ) {
-        if (!service.validateToken(token, "doctor")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
+        var tokenRes = service.validateToken(token, "doctor");
+        if (!tokenRes.getBody().isEmpty()) {
+            return ResponseEntity.status(tokenRes.getStatusCode()).body(Map.of("message", tokenRes.getBody().get("message")));
         }
-
-        Long doctorId = service.tokenService.extractDoctorIdFromToken(token); // optional utility
-        if (doctorId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Doctor ID missing or invalid.");
-        }
-
-        List<Appointment> appointments = appointmentService.getAppointmentsForDoctorOnDate(doctorId, date, patientName);
-        return ResponseEntity.ok(appointments);
+        LocalDate d = LocalDate.parse(date);
+        return ResponseEntity.ok(appointmentService.getAppointment(patientName, d, token));
     }
 
-    // 4. Book a new appointment
-    @PostMapping("/book/{token}")
-    public ResponseEntity<?> bookAppointment(@PathVariable String token, @RequestBody Appointment appointment) {
-        if (!service.validateToken(token, "patient")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
-        }
+    @PostMapping("/{token}")
+    public ResponseEntity<Map<String, String>> bookAppointment(@Valid @RequestBody Appointment appointment, @PathVariable String token) {
+        var tokenRes = service.validateToken(token, "patient");
+        if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
 
-        int validationCode = service.validateAppointment(appointment.getDoctor().getId(), appointment.getAppointmentTime().toLocalDate(), appointment.getAppointmentTime().toLocalTime());
+        int valid = service.validateAppointment(appointment);
+        if (valid == -1) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Invalid doctor id"));
+        if (valid == 0) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Appointment slot unavailable"));
 
-        if (validationCode == -1) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doctor not found.");
-        } else if (validationCode == 0) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Appointment slot is not available.");
-        }
-
-        int result = appointmentService.bookAppointment(appointment);
-        return result == 1
-                ? ResponseEntity.status(HttpStatus.CREATED).body("Appointment booked successfully.")
-                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to book appointment.");
+        int booked = appointmentService.bookAppointment(appointment);
+        if (booked == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Appointment booked"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
     }
 
-    // 5. Update existing appointment
-    @PutMapping("/update/{token}/{appointmentId}/{patientId}")
-    public ResponseEntity<?> updateAppointment(@PathVariable String token,
-                                               @PathVariable Long appointmentId,
-                                               @PathVariable Long patientId,
-                                               @RequestBody Appointment updatedAppointment) {
-        if (!service.validateToken(token, "patient")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
-        }
+    @PutMapping("/{token}")
+    public ResponseEntity<Map<String, String>> updateAppointment(@Valid @RequestBody Appointment appointment, @PathVariable String token) {
+        var tokenRes = service.validateToken(token, "patient");
+        if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
 
-        String result = appointmentService.updateAppointment(appointmentId, updatedAppointment, patientId);
-
-        return result.equals("Appointment updated successfully")
-                ? ResponseEntity.ok(result)
-                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        return appointmentService.updateAppointment(appointment);
     }
 
-    // 6. Cancel an appointment
-    @DeleteMapping("/cancel/{token}/{appointmentId}/{patientId}")
-    public ResponseEntity<?> cancelAppointment(@PathVariable String token,
-                                               @PathVariable Long appointmentId,
-                                               @PathVariable Long patientId) {
-        if (!service.validateToken(token, "patient")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
-        }
+    @DeleteMapping("/{id}/{token}")
+    public ResponseEntity<Map<String, String>> cancelAppointment(@PathVariable long id, @PathVariable String token) {
+        var tokenRes = service.validateToken(token, "patient");
+        if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
 
-        String result = appointmentService.cancelAppointment(appointmentId, patientId);
-        return result.equals("Appointment canceled successfully")
-                ? ResponseEntity.ok(result)
-                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        return appointmentService.cancelAppointment(id, token);
     }
 }
-
-
-
 //public class AppointmentController {
 
 // 1. Set Up the Controller Class:
