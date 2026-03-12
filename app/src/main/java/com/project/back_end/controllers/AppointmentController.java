@@ -6,7 +6,6 @@ import com.project.back_end.services.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("${api.path}appointments")
 public class AppointmentController {
-
     private final AppointmentService appointmentService;
     private final Service service;
 
@@ -43,12 +41,12 @@ public class AppointmentController {
         if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
 
         int valid = service.validateAppointment(appointment);
-        if (valid == -1) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Invalid doctor id"));
-        if (valid == 0) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Appointment slot unavailable"));
+        if (valid == -1) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Doctor ID invalido"));
+        if (valid == 0) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Horario para cita no disponible"));
 
         int booked = appointmentService.bookAppointment(appointment);
-        if (booked == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Appointment booked"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+        if (booked == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Cita ha sido registrada"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error interno en servidor"));
     }
 
     @PutMapping("/{token}")
@@ -62,8 +60,8 @@ public class AppointmentController {
     @DeleteMapping("/{id}/{token}")
     public ResponseEntity<Map<String, String>> cancelAppointment(@PathVariable long id, @PathVariable String token) {
         var tokenRes = service.validateToken(token, "patient");
-        if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
-
+        if (!tokenRes.getBody().isEmpty()) 
+            return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
         return appointmentService.cancelAppointment(id, token);
     }
 }
