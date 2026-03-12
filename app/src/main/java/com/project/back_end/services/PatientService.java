@@ -2,30 +2,21 @@ package com.project.back_end.services;
 
 import com.project.back_end.DTO.AppointmentDTO;
 import com.project.back_end.models.Appointment;
-import com.project.back_end.models.Doctor;
 import com.project.back_end.models.Patient;
 import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.PatientRepository;
-import com.project.back_end.services.TokenService;
-import jakarta.transaction.Transactional;
-//import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-//import java.time.LocalDateTime;
-import java.util.List;
-//import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
-@SuppressWarnings("unused")
-@Service // 1. Service annotation
+@org.springframework.stereotype.Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
     private final TokenService tokenService;
 
-    // 2. Constructor Injection
-    //@Autowired
     public PatientService(PatientRepository patientRepository,
                           AppointmentRepository appointmentRepository,
                           TokenService tokenService) {
@@ -34,81 +25,92 @@ public class PatientService {
         this.tokenService = tokenService;
     }
 
-    // 3. Create a new patient
     public int createPatient(Patient patient) {
         try {
             patientRepository.save(patient);
             return 1;
         } catch (Exception e) {
-            e.printStackTrace();
             return 0;
         }
     }
 
-    // 4. Get all appointments for a patient (as DTO)
-    @Transactional
-    public List<AppointmentDTO> getPatientAppointment(Long patientId) {
+    public ResponseEntity<Map<String, Object>> getPatientAppointment(Long id, String token) {
         try {
-            List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-            return appointments.stream().map(this::convertToDTO).collect(Collectors.toList());
+            String email = tokenService.extractIdentifier(token);
+            Patient p = patientRepository.findByEmail(email);
+
+            if (p == null || !p.getId().equals(id)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
+            }
+
+            List<Appointment> appointments = appointmentRepository.findByPatientId(id);
+            List<AppointmentDTO> dtos = toDTOs(appointments);
+
+            return ResponseEntity.ok(Map.of("appointments", dtos));
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
         }
     }
 
-    // 5. Filter appointments by condition ("past" or "future")
-    @Transactional
-    public List<AppointmentDTO> filterByCondition(String condition, Long patientId) {
+    public ResponseEntity<Map<String, Object>> filterByCondition(String condition, Long id) {
         try {
-            int status = condition.equalsIgnoreCase("past") ? 1 : condition.equalsIgnoreCase("future") ? 0 : -1;
-            if (status == -1) throw new IllegalArgumentException("Invalid condition: must be 'past' or 'future'");
-            List<Appointment> list = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(patientId, status);
-            return list.stream().map(this::convertToDTO).collect(Collectors.toList());
+            int status = ("past".equalsIgnoreCase(condition) || "completed".equalsIgnoreCase(condition)) ? 1 : 0;
+            List<Appointment> appointments = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, status);
+            return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
         }
     }
 
-    // 6. Filter appointments by doctor name
-    @Transactional
-    public List<AppointmentDTO> filterByDoctor(String doctorName, Long patientId) {
+    public ResponseEntity<Map<String, Object>> filterByDoctor(String name, Long patientId) {
         try {
-            List<Appointment> list = appointmentRepository.filterByDoctorNameAndPatientId(doctorName, patientId);
-            return list.stream().map(this::convertToDTO).collect(Collectors.toList());
+            List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientId(name, patientId);
+            return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
         }
     }
 
-    // 7. Filter appointments by doctor and condition
-    @Transactional
-    public List<AppointmentDTO> filterByDoctorAndCondition(String condition, String doctorName, Long patientId) {
+    public ResponseEntity<Map<String, Object>> filterByDoctorAndCondition(String condition, String name, long patientId) {
         try {
-            int status = condition.equalsIgnoreCase("past") ? 1 : condition.equalsIgnoreCase("future") ? 0 : -1;
-            if (status == -1) throw new IllegalArgumentException("Invalid condition: must be 'past' or 'future'");
-
-            List<Appointment> list = appointmentRepository.filterByDoctorNameAndPatientIdAndStatus(doctorName, patientId, status);
-            return list.stream().map(this::convertToDTO).collect(Collectors.toList());
+            int status = ("past".equalsIgnoreCase(condition) || "completed".equalsIgnoreCase(condition)) ? 1 : 0;
+            List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientIdAndStatus(name, patientId, status);
+            return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            e.printStackTrace();
-            return List.of();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
         }
     }
 
-    // 8. Get patient details using token
-    public Patient getPatientDetails(String token) {
+    public ResponseEntity<Map<String, Object>> getPatientDetails(String token) {
         try {
-            String email = tokenService.extractEmailFromToken(token);
-            return patientRepository.findByEmail(email);
+            String email = tokenService.extractIdentifier(token);
+            Patient p = patientRepository.findByEmail(email);
+            if (p == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
+            return ResponseEntity.ok(Map.of("patient", p));
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
         }
     }
 
+    private List<AppointmentDTO> toDTOs(List<Appointment> appointments) {
+        List<AppointmentDTO> out = new ArrayList<>();
+        for (Appointment a : appointments) {
+            out.add(new AppointmentDTO(
+                    a.getId(),
+                    a.getDoctor().getId(),
+                    a.getDoctor().getName(),
+                    a.getPatient().getId(),
+                    a.getPatient().getName(),
+                    a.getPatient().getEmail(),
+                    a.getPatient().getPhone(),
+                    a.getPatient().getAddress(),
+                    a.getAppointmentTime(),
+                    a.getStatus()
+            ));
+        }
+        return out;
+    }
+}
     // 10. Utility: Convert Appointment to DTO
     private AppointmentDTO convertToDTO(Appointment appointment) {
         Doctor doctor = appointment.getDoctor();
