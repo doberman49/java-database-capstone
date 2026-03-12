@@ -7,12 +7,10 @@ import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.PatientRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.*;
 
 @org.springframework.stereotype.Service
 public class PatientService {
-
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
     private final TokenService tokenService;
@@ -48,7 +46,7 @@ public class PatientService {
 
             return ResponseEntity.ok(Map.of("appointments", dtos));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
         }
     }
 
@@ -58,7 +56,7 @@ public class PatientService {
             List<Appointment> appointments = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, status);
             return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
         }
     }
 
@@ -67,7 +65,7 @@ public class PatientService {
             List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientId(name, patientId);
             return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
         }
     }
 
@@ -77,7 +75,7 @@ public class PatientService {
             List<Appointment> appointments = appointmentRepository.filterByDoctorNameAndPatientIdAndStatus(name, patientId, status);
             return ResponseEntity.ok(Map.of("appointments", toDTOs(appointments)));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
         }
     }
 
@@ -88,7 +86,7 @@ public class PatientService {
             if (p == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
             return ResponseEntity.ok(Map.of("patient", p));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
         }
     }
 
