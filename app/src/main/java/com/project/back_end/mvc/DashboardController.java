@@ -8,16 +8,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class DashboardController {
-
     // 2. Autowire the shared service (assumed name: TokenValidationService)
     @Autowired
     private TokenValidationService tokenValidationService;
-
     // 3. Admin dashboard handler
     @GetMapping("/adminDashboard/{token}")
     public ModelAndView adminDashboard(@PathVariable("token") String token) {
         boolean isValid = tokenValidationService.validateToken(token, "admin");
-
         if (isValid) {
             return new ModelAndView("admin/adminDashboard");
         } else {
@@ -29,7 +26,6 @@ public class DashboardController {
     @GetMapping("/doctorDashboard/{token}")
     public ModelAndView doctorDashboard(@PathVariable("token") String token) {
         boolean isValid = tokenValidationService.validateToken(token, "doctor");
-
         if (isValid) {
             return new ModelAndView("doctor/doctorDashboard");
         } else {
