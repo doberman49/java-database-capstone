@@ -7,13 +7,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    // 1. Find a patient by email
     Patient findByEmail(String email);
 
-    // 2. Find a patient by email OR phone
     Patient findByEmailOrPhone(String email, String phone);
 }
-
 //public interface PatientRepository {
     // 1. Extend JpaRepository:
 //    - The repository extends JpaRepository<Patient, Long>, which provides basic CRUD functionality.
