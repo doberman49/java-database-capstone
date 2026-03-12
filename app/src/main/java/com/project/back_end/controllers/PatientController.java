@@ -7,14 +7,12 @@ import com.project.back_end.services.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 import java.util.Map;
 
 @RestController
 @RequestMapping("${api.path}patient")
 public class PatientController {
-
     private final PatientService patientService;
     private final Service service;
 
@@ -35,11 +33,11 @@ public class PatientController {
     @PostMapping
     public ResponseEntity<Map<String, String>> createPatient(@Valid @RequestBody Patient patient) {
         boolean ok = service.validatePatient(patient);
-        if (!ok) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Patient with email id or phone no already exist"));
+        if (!ok) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Paciente con ese ID, email o mobil no existe"));
 
         int created = patientService.createPatient(patient);
-        if (created == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Signup successful"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+        if (created == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Log in exitoso"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error en servidor interno"));
     }
 
     @PostMapping("/login")
