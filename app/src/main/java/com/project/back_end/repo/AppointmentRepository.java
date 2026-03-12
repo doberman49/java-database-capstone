@@ -4,16 +4,13 @@ import com.project.back_end.models.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-
     @Query("""
         SELECT a FROM Appointment a
         LEFT JOIN FETCH a.patient p
@@ -23,7 +20,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         AND a.appointmentTime BETWEEN :start AND :end
     """)
     List<Appointment> findByDoctorIdAndAppointmentTimeBetween(Long doctorId, LocalDateTime start, LocalDateTime end);
-
     @Query("""
         SELECT a FROM Appointment a
         LEFT JOIN FETCH a.patient p
@@ -44,7 +40,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByPatientId(Long patientId);
 
     List<Appointment> findByPatient_IdAndStatusOrderByAppointmentTimeAsc(Long patientId, int status);
-
     @Query("""
         SELECT a FROM Appointment a
         JOIN a.doctor d
@@ -52,7 +47,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
         AND a.patient.id = :patientId
     """)
     List<Appointment> filterByDoctorNameAndPatientId(String doctorName, Long patientId);
-
     @Query("""
         SELECT a FROM Appointment a
         JOIN a.doctor d
