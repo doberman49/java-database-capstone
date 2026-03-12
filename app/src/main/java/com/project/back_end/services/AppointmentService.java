@@ -9,7 +9,6 @@ import com.project.back_end.repo.PatientRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -50,13 +49,13 @@ public class AppointmentService {
         try {
             Map<String, String> res = new HashMap<>();
             if (appointment.getId() == null) {
-                res.put("message", "Appointment id missing");
+                res.put("message", "ID de cita no localizada");
                 return ResponseEntity.badRequest().body(res);
             }
 
             Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
             if (existingOpt.isEmpty()) {
-                res.put("message", "Appointment not found");
+                res.put("message", "ID de cita no encontrado");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
             }
 
@@ -73,11 +72,11 @@ public class AppointmentService {
             // Validate appointment slot
             int valid = service.validateAppointment(appointment);
             if (valid == -1) {
-                res.put("message", "Invalid doctor id");
+                res.put("message", "ID de doctor invalido");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
             }
             if (valid == 0) {
-                res.put("message", "Appointment slot unavailable");
+                res.put("message", "Horario de cita no disponible");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(res);
             }
 
@@ -85,14 +84,13 @@ public class AppointmentService {
             existing.setStatus(appointment.getStatus());
             existing.setDoctor(appointment.getDoctor());
             existing.setPatient(appointment.getPatient());
-
             appointmentRepository.save(existing);
-            res.put("message", "Appointment updated");
+            res.put("message", "Cita actualizada");
             return ResponseEntity.ok(res);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Internal server error"));
+                    .body(Map.of("message", "Error interno en servidor"));
         }
     }
 
@@ -102,10 +100,9 @@ public class AppointmentService {
             Map<String, String> res = new HashMap<>();
             Optional<Appointment> existingOpt = appointmentRepository.findById(id);
             if (existingOpt.isEmpty()) {
-                res.put("message", "Appointment not found");
+                res.put("message", "Cita no localizada");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
             }
-
             Appointment appt = existingOpt.get();
             String email = tokenService.extractIdentifier(token);
             Patient p = patientRepository.findByEmail(email);
@@ -113,13 +110,12 @@ public class AppointmentService {
                 res.put("message", "Unauthorized");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
-
             appointmentRepository.delete(appt);
-            res.put("message", "Appointment cancelled");
+            res.put("message", "Cita ha sido cancelada");
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Internal server error"));
+                    .body(Map.of("message", "Error interno en servidor"));
         }
     }
 
@@ -127,12 +123,9 @@ public class AppointmentService {
     public Map<String, Object> getAppointment(String pname, LocalDate date, String token) {
         String doctorEmail = tokenService.extractIdentifier(token);
         Doctor doc = doctorRepository.findByEmail(doctorEmail);
-
         if (doc == null) return Map.of("appointments", List.of());
-
         LocalDateTime start = date.atStartOfDay();
         LocalDateTime end = date.plusDays(1).atStartOfDay().minusNanos(1);
-
         List<Appointment> appointments;
         if (pname == null || pname.isBlank() || "null".equalsIgnoreCase(pname)) {
             appointments = appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doc.getId(), start, end);
@@ -141,7 +134,6 @@ public class AppointmentService {
                     doc.getId(), pname, start, end
             );
         }
-
         return Map.of("appointments", appointments);
     }
 
