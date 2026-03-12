@@ -119,7 +119,7 @@ public class Doctor {
         // Parameterized constructor for convenience
     public Doctor(String name, String speciality, String email, String password, String phone, List<String> availableTimes) {
         this.name = name;
-        this.speciality = speciality;
+        this.specialty = specialty;
         this.email = email;
         this.password = password;
         this.phone = phone;
