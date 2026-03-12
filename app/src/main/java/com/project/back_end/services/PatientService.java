@@ -85,7 +85,7 @@ public class PatientService {
 
     // 7. Filter appointments by doctor and condition
     @Transactional
-    public List<AppointmentDTO> filterByDoctorAndCondition(String doctorName, Long patientId, String condition) {
+    public List<AppointmentDTO> filterByDoctorAndCondition(String condition, String doctorName, Long patientId) {
         try {
             int status = condition.equalsIgnoreCase("past") ? 1 : condition.equalsIgnoreCase("future") ? 0 : -1;
             if (status == -1) throw new IllegalArgumentException("Invalid condition: must be 'past' or 'future'");
