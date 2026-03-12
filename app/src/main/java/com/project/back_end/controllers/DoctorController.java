@@ -7,7 +7,6 @@ import com.project.back_end.services.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("${api.path}doctor")
 public class DoctorController {
-
     private final DoctorService doctorService;
     private final Service service;
 
@@ -50,9 +48,9 @@ public class DoctorController {
         if (!tokenRes.getBody().isEmpty()) return ResponseEntity.status(tokenRes.getStatusCode()).body(tokenRes.getBody());
 
         int saved = doctorService.saveDoctor(doctor);
-        if (saved == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Doctor added to db"));
-        if (saved == -1) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Doctor already exists"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Some internal error occurred"));
+        if (saved == 1) return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Doctor añadido en bae de datos"));
+        if (saved == -1) return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "Doctor ya existe en base de datos"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error interno ocurrido en servidor"));
     }
 
     @PostMapping("/login")
@@ -67,8 +65,8 @@ public class DoctorController {
 
         int updated = doctorService.updateDoctor(doctor);
         if (updated == 1) return ResponseEntity.ok(Map.of("message", "Doctor updated"));
-        if (updated == -1) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Doctor not found"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Some internal error occurred"));
+        if (updated == -1) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Doctor no localizado"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error interno en servidor"));
     }
 
     @DeleteMapping("/{id}/{token}")
@@ -78,8 +76,8 @@ public class DoctorController {
 
         int deleted = doctorService.deleteDoctor(id);
         if (deleted == 1) return ResponseEntity.ok(Map.of("message", "Doctor deleted successfully"));
-        if (deleted == -1) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Doctor not found with id"));
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Some internal error occurred"));
+        if (deleted == -1) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Doctor no localizado con ese ID"));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Ocurrio error interno en servidor"));
     }
 
     @GetMapping("/filter/{name}/{time}/{speciality}")
