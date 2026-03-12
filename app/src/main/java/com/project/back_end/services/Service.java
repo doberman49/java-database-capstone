@@ -9,13 +9,11 @@ import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.util.HashMap;
 import java.util.Map;
 
 @org.springframework.stereotype.Service
 public class Service {
-
     private final TokenService tokenService;
     private final AdminRepository adminRepository;
     private final DoctorRepository doctorRepository;
@@ -43,7 +41,7 @@ public class Service {
         Map<String, String> res = new HashMap<>();
         boolean valid = tokenService.validateToken(token, user);
         if (!valid) {
-            res.put("message", "Invalid or expired token");
+            res.put("message", "Token invalido o vencido");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
         }
         return ResponseEntity.ok(Map.of());
@@ -54,16 +52,14 @@ public class Service {
         try {
             Admin existing = adminRepository.findByUsername(receivedAdmin.getUsername());
             if (existing == null || !existing.getPassword().equals(receivedAdmin.getPassword())) {
-                res.put("message", "Invalid credentials");
+                res.put("message", "Credenciales invalidas");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
-
             String token = tokenService.generateToken(existing.getUsername());
             res.put("token", token);
             return ResponseEntity.ok(res);
-
         } catch (Exception e) {
-            res.put("message", "Internal server error");
+            res.put("message", "Error en servidor interno");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
     }
@@ -100,8 +96,8 @@ public class Service {
     }
 
     public int validateAppointment(Appointment appointment) {
-        if (appointment == null || appointment.getDoctor() == null || appointment.getDoctor().getId() == null) return -1;
-
+        if (appointment == null || appointment.getDoctor() == null || appointment.getDoctor().getId() == null)
+            return -1;
         Long doctorId = appointment.getDoctor().getId();
         var doctorOpt = doctorRepository.findById(doctorId);
         if (doctorOpt.isEmpty()) return -1;
@@ -123,14 +119,14 @@ public class Service {
         try {
             Patient p = patientRepository.findByEmail(login.getIdentifier());
             if (p == null || !p.getPassword().equals(login.getPassword())) {
-                res.put("message", "Invalid credentials");
+                res.put("message", "Credenciales invalidas");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
             String token = tokenService.generateToken(p.getEmail());
             res.put("token", token);
             return ResponseEntity.ok(res);
         } catch (Exception e) {
-            res.put("message", "Internal server error");
+            res.put("message", "Error en servidor interno");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
     }
@@ -142,19 +138,19 @@ public class Service {
             if (p == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
             }
-
             Long patientId = p.getId();
             String c = normalize(condition);
             String n = normalize(name);
-
-            if (c != null && n != null) return patientService.filterByDoctorAndCondition(c, n, patientId);
-            if (c != null) return patientService.filterByCondition(c, patientId);
-            if (n != null) return patientService.filterByDoctor(n, patientId);
-
+            if (c != null && n != null) 
+                return patientService.filterByDoctorAndCondition(c, n, patientId);
+            if (c != null) 
+                return patientService.filterByCondition(c, patientId);
+            if (n != null) 
+                return patientService.filterByDoctor(n, patientId);
             return patientService.getPatientAppointment(patientId, token);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "Internal server error"));
+                    .body(Map.of("message", "Error en servidor interno"));
         }
     }
 
