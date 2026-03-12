@@ -10,18 +10,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class TokenService {
-
     private final AdminRepository adminRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
-
     private final String secret;
 
     public TokenService(
@@ -60,22 +57,18 @@ public class TokenService {
     public boolean validateToken(String token, String user) {
         try {
             String identifier = extractIdentifier(token);
-
             if ("admin".equalsIgnoreCase(user)) {
                 Admin a = adminRepository.findByUsername(identifier);
                 return a != null;
             }
-
             if ("doctor".equalsIgnoreCase(user)) {
                 Doctor d = doctorRepository.findByEmail(identifier);
                 return d != null;
             }
-
             if ("patient".equalsIgnoreCase(user)) {
                 Patient p = patientRepository.findByEmail(identifier);
                 return p != null;
             }
-
             return false;
         } catch (Exception e) {
             return false;
