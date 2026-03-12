@@ -19,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
-@Table(name = "doctor")
+@Table(name = "doctors")
 public class Doctor {
 
 // @Entity annotation:
@@ -60,7 +60,7 @@ public class Doctor {
       @NotNull (message = "Especialidad de doctor debe ser informado")
       @Size (min = 3, max = 50)
     @Column(nullable = false)
-      private String speciality;
+      private String specialty;
 
 // 4. 'email' field:
 //    - Type: private String
@@ -144,12 +144,12 @@ public class Doctor {
         this.name = name;
     }
 
-    public String getSpeciality() {
-        return speciality;
+    public String getSpecialty() {
+        return specialty;
     }
 
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     public String getEmail() {
