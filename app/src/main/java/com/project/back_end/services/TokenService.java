@@ -1,86 +1,79 @@
 package com.project.back_end.services;
 
-import java.util.Date;
-
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.project.back_end.models.Admin;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.models.Patient;
 import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Component
 public class TokenService {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
     private final AdminRepository adminRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
-    public TokenService(AdminRepository adminRepository,DoctorRepository doctorRepository,PatientRepository patientRepository) {
-        this.adminRepository=adminRepository;
+
+    private final String secret;
+
+    public TokenService(
+            AdminRepository adminRepository,
+            DoctorRepository doctorRepository,
+            PatientRepository patientRepository,
+            @Value("${jwt.secret}") String secret
+    ) {
+        this.adminRepository = adminRepository;
         this.doctorRepository = doctorRepository;
-        this.patientRepository=patientRepository;
+        this.patientRepository = patientRepository;
+        this.secret = secret;
     }
 
-    // Return type changed to SecretKey to fix verifyWith(...) issue
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
-    }
+    public String generateToken(String identifier) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + (7L * 24 * 60 * 60 * 1000)); // 7 days
 
-    public String generateToken(String email) {
         return Jwts.builder()
-                .subject(email)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7))
-                .signWith(getSigningKey()) // clean & modern
+                .subject(identifier)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(getSigningKey())
                 .compact();
-    }    
+    }
 
-    public String extractEmail(String token) {
+    public String extractIdentifier(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey()) // No more error now
+                .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
     }
 
-    public boolean validateToken(String token,String user) {
+    public boolean validateToken(String token, String user) {
         try {
-            String extracted = extractEmail(token);
-            if(user.equals("admin"))
-            {
-                Admin admin =adminRepository.findByUsername(extracted);
-                if(admin!=null)
-                {
-                    return true;
-                }
+            String identifier = extractIdentifier(token);
+
+            if ("admin".equalsIgnoreCase(user)) {
+                Admin a = adminRepository.findByUsername(identifier);
+                return a != null;
             }
-            else if(user.equals("doctor"))
-            {
-                Doctor doctor=doctorRepository.findByEmail(extracted);
-                if(doctor!=null)
-                {
-                    return true;
-                }
+
+            if ("doctor".equalsIgnoreCase(user)) {
+                Doctor d = doctorRepository.findByEmail(identifier);
+                return d != null;
             }
-            else if(user.equals("patient"))
-            {
-                Patient patient=patientRepository.findByEmail(extracted);
-                if(patient!=null)
-                {
-                    return true;
-                }
+
+            if ("patient".equalsIgnoreCase(user)) {
+                Patient p = patientRepository.findByEmail(identifier);
+                return p != null;
             }
 
             return false;
@@ -89,24 +82,10 @@ public class TokenService {
         }
     }
 
-    public String extractEmailFromToken(String token) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'extractEmailFromToken'");
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
-
-    public String generateToken(Object object, String string, String username) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'generateToken'");
-    }
-
-    public Long extractDoctorIdFromToken(String token) {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'extractDoctorIdFromToken'");
-    }
-
-   
 }
-
 //public class TokenService {
 // 1. **@Component Annotation**
 // The @Component annotation marks this class as a Spring component, meaning Spring will manage it as a bean within its application context.
