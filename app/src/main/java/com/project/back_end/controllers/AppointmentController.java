@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.lang.*;
+import java.util.*;
 
 @RestController // 1. Mark as REST controller
 @RequestMapping("/appointments") // Base path for appointment operations
