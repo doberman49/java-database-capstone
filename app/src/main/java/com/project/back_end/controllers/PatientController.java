@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.lang.*;
+import java.util.*;
 
 @RestController // 1. Mark as REST controller
 @RequestMapping("/patient") // Group all patient operations under /patient
