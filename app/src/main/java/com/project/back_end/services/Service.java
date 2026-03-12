@@ -1,28 +1,17 @@
 package com.project.back_end.services;
 
-import com.project.back_end.DTO.AppointmentDTO;
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Admin;
 import com.project.back_end.models.Appointment;
-import com.project.back_end.models.Doctor;
 import com.project.back_end.models.Patient;
 import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
-//import com.project.back_end.services.TokenService;
-//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Map;
-import java.util.Date;
-import java.lang.*;
 import java.util.HashMap;
+import java.util.Map;
 
 @org.springframework.stereotype.Service
 public class Service {
@@ -132,7 +121,7 @@ public class Service {
     public ResponseEntity<Map<String, String>> validatePatientLogin(Login login) {
         Map<String, String> res = new HashMap<>();
         try {
-            Patient p = patientRepository.findByEmail(login.getEmail());
+            Patient p = patientRepository.findByEmail(login.getIdentifier());
             if (p == null || !p.getPassword().equals(login.getPassword())) {
                 res.put("message", "Invalid credentials");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
@@ -148,7 +137,7 @@ public class Service {
 
     public ResponseEntity<Map<String, Object>> filterPatient(String condition, String name, String token) {
         try {
-            String email = tokenService.extractEmail(token);
+            String email = tokenService.extractIdentifier(token);
             Patient p = patientRepository.findByEmail(email);
             if (p == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
