@@ -111,26 +111,6 @@ public class PatientService {
         return out;
     }
 }
-    // 10. Utility: Convert Appointment to DTO
-    private AppointmentDTO convertToDTO(Appointment appointment) {
-        Doctor doctor = appointment.getDoctor();
-        Patient patient = appointment.getPatient();
-
-        return new AppointmentDTO(
-                appointment.getId(),
-                doctor.getId(),
-                doctor.getName(),
-                patient.getId(),
-                patient.getName(),
-                patient.getEmail(),
-                patient.getPhone(),
-                patient.getAddress(),
-                appointment.getAppointmentTime(),
-                appointment.getStatus()
-        );
-    }
-}
-
 //public class PatientService {
 // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation is used to mark this class as a Spring service component. 
