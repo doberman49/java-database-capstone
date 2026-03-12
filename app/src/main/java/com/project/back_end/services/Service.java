@@ -74,22 +74,22 @@ public class Service {
         }
     }
 
-    public Map<String, Object> filterDoctor(String name, String specility, String time) {
+    public Map<String, Object> filterDoctor(String name, String speciality, String time) {
         Map<String, Object> map = new HashMap<>();
-        if (!name.equals("null") && !time.equals("null") && !specility.equals("null")) {
-            map = doctorService.filterDoctorsByNameSpecilityandTime(name, specility, time);
+        if (!name.equals("null") && !time.equals("null") && !speciality.equals("null")) {
+            map = doctorService.filterDoctorsByNameSpecialityAndTime(name, speciality, time);
         }
 
         else if (!name.equals("null") && !time.equals("null")) {
             map = doctorService.filterDoctorByNameAndTime(name, time);
-        } else if (!name.equals("null") && !specility.equals("null")) {
-            map = doctorService.filterDoctorByNameAndSpecility(name, specility);
-        } else if (!specility.equals("null") && !time.equals("null")) {
-            map = doctorService.filterDoctorByTimeAndSpecility(specility, time);
+        } else if (!name.equals("null") && !speciality.equals("null")) {
+            map = doctorService.filterDoctorByNameAndSpeciality(name, speciality);
+        } else if (!speciality.equals("null") && !time.equals("null")) {
+            map = doctorService.filterDoctorByTimeAndSpeciality(speciality, time);
         } else if (!name.equals("null")) {
             map = doctorService.findDoctorByName(name);
-        } else if (!specility.equals("null")) {
-            map = doctorService.filterDoctorBySpecility(specility);
+        } else if (!speciality.equals("null")) {
+            map = doctorService.filterDoctorBySpeciality(speciality);
         } else if (!time.equals("null")) {
             map = doctorService.filterDoctorsByTime(time);
         } else {
