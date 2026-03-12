@@ -7,7 +7,6 @@ import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.DoctorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,8 +28,8 @@ public class DoctorService {
 
     public List<String> getDoctorAvailability(Long doctorId, LocalDate date) {
         Optional<Doctor> docOpt = doctorRepository.findById(doctorId);
-        if (docOpt.isEmpty()) return List.of();
-
+        if (docOpt.isEmpty()) 
+            return List.of();
         Doctor doctor = docOpt.get();
         List<String> baseSlots = doctor.getAvailableTimes() == null ? new ArrayList<>() : new ArrayList<>(doctor.getAvailableTimes());
 
@@ -60,8 +59,8 @@ public class DoctorService {
     public int saveDoctor(Doctor doctor) {
         try {
             Doctor existing = doctorRepository.findByEmail(doctor.getEmail());
-            if (existing != null) return -1;
-
+            if (existing != null) 
+                return -1;
             doctorRepository.save(doctor);
             return 1;
         } catch (Exception e) {
@@ -73,8 +72,8 @@ public class DoctorService {
         try {
             if (doctor.getId() == null) return -1;
             Optional<Doctor> existing = doctorRepository.findById(doctor.getId());
-            if (existing.isEmpty()) return -1;
-
+            if (existing.isEmpty()) 
+                return -1;
             Doctor d = existing.get();
             d.setName(doctor.getName());
             d.setEmail(doctor.getEmail());
@@ -97,8 +96,8 @@ public class DoctorService {
     public int deleteDoctor(long id) {
         try {
             Optional<Doctor> existing = doctorRepository.findById(id);
-            if (existing.isEmpty()) return -1;
-
+            if (existing.isEmpty()) 
+                return -1;
             appointmentRepository.deleteAllByDoctorId(id);
             doctorRepository.deleteById(id);
             return 1;
@@ -111,12 +110,12 @@ public class DoctorService {
         try {
             Doctor d = doctorRepository.findByEmail(login.getIdentifier());
             if (d == null || !d.getPassword().equals(login.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid credentials"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Credenciales invalidas"));
             }
             String token = tokenService.generateToken(d.getEmail());
             return ResponseEntity.ok(Map.of("token", token));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Internal server error"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error interno en servidor"));
         }
     }
 
