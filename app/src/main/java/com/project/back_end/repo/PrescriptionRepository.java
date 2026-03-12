@@ -8,8 +8,6 @@ import java.util.List;
 
 @Repository
 public interface PrescriptionRepository extends MongoRepository<Prescription, String> {
-
-    // 2. Custom query method to find prescriptions by appointment ID
     List<Prescription> findByAppointmentId(Long appointmentId);
 }
 //public interface PrescriptionRepository  {
