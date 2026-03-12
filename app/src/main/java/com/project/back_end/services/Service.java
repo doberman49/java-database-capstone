@@ -30,154 +30,152 @@ public class Service {
     private final TokenService tokenService;
     private final AdminRepository adminRepository;
     private final DoctorRepository doctorRepository;
-    private final DoctorService doctorService;
     private final PatientRepository patientRepository;
+    private final DoctorService doctorService;
     private final PatientService patientService;
 
-    public Service(TokenService tokenService, AdminRepository adminRepository, DoctorService doctorService,
-            DoctorRepository doctorRepository, PatientRepository patientRepository,PatientService patientService) {
+    public Service(
+            TokenService tokenService,
+            AdminRepository adminRepository,
+            DoctorRepository doctorRepository,
+            PatientRepository patientRepository,
+            DoctorService doctorService,
+            PatientService patientService
+    ) {
         this.tokenService = tokenService;
         this.adminRepository = adminRepository;
-        this.doctorService = doctorService;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
-        this.patientService=patientService;
+        this.doctorService = doctorService;
+        this.patientService = patientService;
     }
 
     public ResponseEntity<Map<String, String>> validateToken(String token, String user) {
-        Map<String, String> response = new HashMap<>();
-        if (!tokenService.validateToken(token, user)) {
-            response.put("error", "Invalid or expired token");
+        Map<String, String> res = new HashMap<>();
+        boolean valid = tokenService.validateToken(token, user);
+        if (!valid) {
+            res.put("message", "Invalid or expired token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        return ResponseEntity.ok(Map.of());
     }
 
     public ResponseEntity<Map<String, String>> validateAdmin(Admin receivedAdmin) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> res = new HashMap<>();
         try {
-            Admin admin = adminRepository.findByUsername(receivedAdmin.getUsername());
-            if (admin != null) {
-                if (admin.getPassword().equals(receivedAdmin.getPassword())) {
-                    map.put("token", tokenService.generateToken(admin.getUsername()));
-                    return ResponseEntity.status(HttpStatus.OK).body(map);
-                } else {
-                    map.put("error", "Password does not match");
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
-                }
+            Admin existing = adminRepository.findByUsername(receivedAdmin.getUsername());
+            if (existing == null || !existing.getPassword().equals(receivedAdmin.getPassword())) {
+                res.put("message", "Invalid credentials");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
-            map.put("error", "invalid email id");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
+
+            String token = tokenService.generateToken(existing.getUsername());
+            res.put("token", token);
+            return ResponseEntity.ok(res);
 
         } catch (Exception e) {
-            System.out.println("Error: " + e);
-            map.put("error", "Internal Server error");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+            res.put("message", "Internal server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
     }
 
-    public Map<String, Object> filterDoctor(String name, String speciality, String time) {
-        Map<String, Object> map = new HashMap<>();
-        if (!name.equals("null") && !time.equals("null") && !speciality.equals("null")) {
-            map = doctorService.filterDoctorsByNameSpecialityAndTime(name, speciality, time);
+    public Map<String, Object> filterDoctor(String name, String specialty, String time) {
+        // "null" from frontend means no filter
+        String n = normalize(name);
+        String s = normalize(specialty);
+        String t = normalize(time);
+
+        if (n == null && s == null && t == null) {
+            return Map.of("doctors", doctorService.getDoctors());
         }
 
-        else if (!name.equals("null") && !time.equals("null")) {
-            map = doctorService.filterDoctorByNameAndTime(name, time);
-        } else if (!name.equals("null") && !speciality.equals("null")) {
-            map = doctorService.filterDoctorByNameAndSpeciality(name, speciality);
-        } else if (!speciality.equals("null") && !time.equals("null")) {
-            map = doctorService.filterDoctorByTimeAndSpeciality(speciality, time);
-        } else if (!name.equals("null")) {
-            map = doctorService.findDoctorByName(name);
-        } else if (!speciality.equals("null")) {
-            map = doctorService.filterDoctorBySpeciality(speciality);
-        } else if (!time.equals("null")) {
-            map = doctorService.filterDoctorsByTime(time);
-        } else {
-            map.put("doctors", doctorService.getDoctors());
+        if (n != null && s != null && t != null) {
+            return doctorService.filterDoctorsByNameSpecilityandTime(n, s, t);
         }
-        return map;
-
+        if (n != null && t != null) {
+            return doctorService.filterDoctorByNameAndTime(n, t);
+        }
+        if (n != null && s != null) {
+            return doctorService.filterDoctorByNameAndSpecility(n, s);
+        }
+        if (s != null && t != null) {
+            return doctorService.filterDoctorByTimeAndSpecility(s, t);
+        }
+        if (n != null) {
+            return doctorService.findDoctorByName(n);
+        }
+        if (s != null) {
+            return doctorService.filterDoctorBySpecility(s);
+        }
+        return doctorService.filterDoctorsByTime(t);
     }
 
     public int validateAppointment(Appointment appointment) {
-        Doctor doctor = appointment.getDoctor();
-        Optional<Doctor> result = doctorRepository.findById(doctor.getId());
-        if (result.isEmpty()) {
-            return -1;
-        }
-        LocalDate appointmentDate = appointment.getAppointmentDate();
-        LocalTime appointmentTime = appointment.getAppointmentTimeOnly();
-        List<String> availableTime = doctorService.getDoctorAvailability(doctor.getId(), appointmentDate);
+        if (appointment == null || appointment.getDoctor() == null || appointment.getDoctor().getId() == null) return -1;
 
-        for (String timeSlot : availableTime) {
-            // Split the available time slot into start and end times (e.g., "9:00-10:00" ->
-            // ["9:00", "10:00"])
-            String[] times = timeSlot.split("-");
+        Long doctorId = appointment.getDoctor().getId();
+        var doctorOpt = doctorRepository.findById(doctorId);
+        if (doctorOpt.isEmpty()) return -1;
 
-            // Parse the start time and end time as LocalTime
-            LocalTime startTime = LocalTime.parse(times[0]);
-
-            if (appointmentTime.equals(startTime)) {
-                return 1; // The appointment time matches the start time of an available slot
-            }
-        }
-        return 0;
+        // Check availability list for that day
+        var available = doctorService.getDoctorAvailability(doctorId, appointment.getAppointmentTime().toLocalDate());
+        String requestedSlot = appointment.getAppointmentTime().toLocalTime().toString(); // "09:00"
+        boolean ok = available.stream().anyMatch(slot -> slot.startsWith(requestedSlot));
+        return ok ? 1 : 0;
     }
 
     public boolean validatePatient(Patient patient) {
-        Patient result = patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone());
-        if (result != null) {
-            return false;
-        }
-        return true;
+        Patient existing = patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone());
+        return existing == null;
     }
 
     public ResponseEntity<Map<String, String>> validatePatientLogin(Login login) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> res = new HashMap<>();
         try {
-            Patient result = patientRepository.findByEmail(login.getEmail());
-            if (result != null) {
-                if (result.getPassword().equals(login.getPassword())) {
-                    map.put("token", tokenService.generateToken(login.getEmail()));
-                    return ResponseEntity.status(HttpStatus.OK).body(map);
-                }
-                else {
-                    map.put("error", "Password does not match");
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
-                }
+            Patient p = patientRepository.findByEmail(login.getEmail());
+            if (p == null || !p.getPassword().equals(login.getPassword())) {
+                res.put("message", "Invalid credentials");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
             }
-            map.put("error", "invalid email id");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(map);
-        }
-
-        catch (Exception e) {
-            System.out.println("Error: " + e);
-            map.put("error", "Internal Server error");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(map);
+            String token = tokenService.generateToken(p.getEmail());
+            res.put("token", token);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            res.put("message", "Internal server error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
     }
 
-    public ResponseEntity<Map<String,Object>> filterPatient(String condition,String name,String token)
-    {
-        String extractedEmail = tokenService.extractEmail(token);
-        Long patientId = patientRepository.findByEmail(extractedEmail).getId();
+    public ResponseEntity<Map<String, Object>> filterPatient(String condition, String name, String token) {
+        try {
+            String email = tokenService.extractEmail(token);
+            Patient p = patientRepository.findByEmail(email);
+            if (p == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Unauthorized"));
+            }
 
-        if(name.equals("null") && !condition.equals("null")) {
-            return patientService.filterByCondition(condition,patientId);
+            Long patientId = p.getId();
+            String c = normalize(condition);
+            String n = normalize(name);
+
+            if (c != null && n != null) return patientService.filterByDoctorAndCondition(c, n, patientId);
+            if (c != null) return patientService.filterByCondition(c, patientId);
+            if (n != null) return patientService.filterByDoctor(n, patientId);
+
+            return patientService.getPatientAppointment(patientId, token);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Internal server error"));
         }
-        else if(condition.equals("null")&& !name.equals("null")) {
-            return patientService.filterByDoctor(name,patientId);
-        }
-        else if(!condition.equals("null")&& !name.equals("null")) {
-            return patientService.filterByDoctorAndCondition(condition,name,patientId);
-        }
-        else {
-            return patientService.getPatientAppointment(patientId,token);
-        }
+    }
+
+    private String normalize(String v) {
+        if (v == null) return null;
+        String t = v.trim();
+        if (t.isEmpty() || "null".equalsIgnoreCase(t)) return null;
+        return t;
     }
 }
-
 //@Service // 1. Spring-managed service component
 //rafiky-ini
 //@Service
