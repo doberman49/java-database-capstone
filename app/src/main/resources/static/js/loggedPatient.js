@@ -21,7 +21,7 @@ function loadDoctorCards() {
       });
     })
     .catch(error => {
-      console.error("Failed to load doctors:", error);
+      console.error("Falla al cargar los doctores:", error);
     });
 }
 
@@ -75,11 +75,11 @@ export function showBookingOverlay(e, doctor, patient) {
     const { success, message } = await bookAppointment(appointment, token);
 
     if (success) {
-      alert("Appointment Booked successfully");
+      alert("Cita reservada exitosamente");
       ripple.remove();
       modalApp.remove();
     } else {
-      alert("❌ Failed to book an appointment :: " + message);
+      alert("❌ Falla al reservar la cita :: " + message);
     }
   });
 }
