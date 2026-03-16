@@ -15,7 +15,7 @@ async function initializePage() {
     if (!token) throw new Error("No token found");
 
     const patient = await getPatientData(token);
-    if (!patient) throw new Error("Failed to fetch patient details");
+    if (!patient) throw new Error("Falla al recuperar los detalles del paciente");
 
     patientId = Number(patient.id);
 
@@ -24,8 +24,8 @@ async function initializePage() {
 
     renderAppointments(allAppointments);
   } catch (error) {
-    console.error("Error loading appointments:", error);
-    alert("❌ Failed to load your appointments.");
+    console.error("Error al cargar las citas:", error);
+    alert("❌ Falla al intentar cargar las citas.");
   }
 }
 
@@ -38,7 +38,7 @@ function renderAppointments(appointments) {
   }
 
   if (!appointments.length) {
-    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No Appointments Found</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Citas no localizadas</td></tr>`;
     return;
   }
 
@@ -98,8 +98,8 @@ async function handleFilterChange() {
 
     renderAppointments(filteredAppointments);
   } catch (error) {
-    console.error("Failed to filter appointments:", error);
-    alert("❌ An error occurred while filtering appointments.");
+    console.error("Falla al filtrar las citas:", error);
+    alert("❌ Ocurrio un error al filtrar las citas.");
   }
 }
 
