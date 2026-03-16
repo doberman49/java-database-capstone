@@ -20,13 +20,13 @@ export function createDoctorCard(doctor) {
   name.textContent = `Dr. ${doctor.name}`;
 
   const specialty = document.createElement("p");
-  specialty.textContent = `Specialty: ${doctor.specialty}`;
+  specialty.textContent = `Especialidad: ${doctor.specialty}`;
 
   const email = document.createElement("p");
   email.textContent = `Email: ${doctor.email}`;
 
   const phone = document.createElement("p");
-  phone.textContent = `Phone: ${doctor.phone}`;
+  phone.textContent = `Mobil: ${doctor.phone}`;
 
   const timeList = document.createElement("ul");
   timeList.classList.add("availability-list");
@@ -55,19 +55,19 @@ export function createDoctorCard(doctor) {
         return;
       }
 
-      if (!confirm(`Are you sure you want to delete Dr. ${doctor.name}?`)) return;
+      if (!confirm(`Esta seguro de eliminar al Dr. ${doctor.name}?`)) return;
 
       try {
         const success = await deleteDoctor(doctor.id, token);
         if (success) {
-          alert("Doctor deleted successfully.");
+          alert("Doctor eliminado exitosamente.");
           card.remove();
         } else {
-          alert("Failed to delete doctor.");
+          alert("Falla al tratar de elminar al doctor.");
         }
       } catch (err) {
         console.error(err);
-        alert("Error deleting doctor.");
+        alert("Error durante la eliminacion del doctor.");
       }
     });
 
@@ -81,7 +81,7 @@ export function createDoctorCard(doctor) {
     bookBtn.textContent = "Book Now";
 
     bookBtn.addEventListener("click", () => {
-      alert("Please log in before booking an appointment.");
+      alert("Favor de firmarse antes de reservar una cita.");
       window.location.href = "/pages/patientDashboard.html";
     });
 
@@ -96,7 +96,7 @@ export function createDoctorCard(doctor) {
 
     bookBtn.addEventListener("click", async () => {
       if (!token) {
-        alert("Session expired. Please log in again.");
+        alert("Sesion vencida. Firmese nuevamente.");
         window.location.href = "/pages/patientDashboard.html";
         return;
       }
@@ -106,7 +106,7 @@ export function createDoctorCard(doctor) {
         showBookingOverlay(doctor, patient);
       } catch (err) {
         console.error(err);
-        alert("Error fetching patient details.");
+        alert("Error durante la recuperacion de dealles del paciente.");
       }
     });
 
