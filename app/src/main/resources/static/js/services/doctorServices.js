@@ -12,7 +12,7 @@ export async function getDoctors() {
     const data = await response.json();
     return data.doctors || [];
   } catch (error) {
-    console.error("Error fetching doctors:", error);
+    console.error("Error al recuperar los doctores:", error);
     return [];
   }
 }
@@ -30,10 +30,10 @@ export async function deleteDoctor(doctorId, token) {
       message: data.message
     };
   } catch (error) {
-    console.error("Error deleting doctor:", error);
+    console.error("Error al eliminar al doctor:", error);
     return {
       success: false,
-      message: "An unexpected error occurred."
+      message: "Error inesperado al tratar de elminar al doctor."
     };
   }
 }
@@ -58,7 +58,7 @@ export async function saveDoctor(doctor, token) {
     console.error("Error saving doctor:", error);
     return {
       success: false,
-      message: "Unable to save doctor. Please try again."
+      message: "Dificultades para salvar al doctor. Intente mas tarde."
     };
   }
 }
@@ -69,15 +69,15 @@ export async function filterDoctors(name = "", time = "", specialty = "") {
     const response = await fetch(`${DOCTOR_API}/filter/${name}/${time}/${specialty}`);
 
     if (!response.ok) {
-      console.error("Filter request failed");
+      console.error("Filtro de doctores fllido");
       return { doctors: [] };
     }
 
     const data = await response.json();
     return data.doctors || [];
   } catch (error) {
-    console.error("Error filtering doctors:", error);
-    alert("Something went wrong while filtering doctors.");
+    console.error("Error mientras filtraba doctores:", error);
+    alert("Error inesperado mientras los doctores eran filtrados.");
     return { doctors: [] };
   }
 }
