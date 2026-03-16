@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
     } catch (error) {
-      console.warn("No existing prescription found or failed to load:", error);
+      console.warn("Receta no encontrada o falla al ser cargada:", error);
     }
   }
   if (mode === 'view') {
@@ -71,10 +71,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { success, message } = await savePrescription(prescription, token);
 
     if (success) {
-      alert("✅ Prescription saved successfully.");
+      alert("✅ Receta salvada exitosamente.");
       selectRole('doctor');
     } else {
-      alert("❌ Failed to save prescription. " + message);
+      alert("❌ Falla al salvar la receta. " + message);
     }
   });
 });
