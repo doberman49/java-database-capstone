@@ -7,7 +7,7 @@ const APPOINTMENT_API = `${API_BASE_URL}/appointments`;
 export async function getAllAppointments(date, patientName, token) {
   const response = await fetch(`${APPOINTMENT_API}/${date}/${patientName}/${token}`);
   if (!response.ok) {
-    throw new Error("Failed to fetch appointments");
+    throw new Error("Falla al recuperar citas");
   }
 
   return await response.json();
@@ -26,13 +26,13 @@ export async function bookAppointment(appointment, token) {
     const data = await response.json();
     return {
       success: response.ok,
-      message: data.message || "Something went wrong"
+      message: data.message || "Ocurrio un error al reservar la cita"
     };
   } catch (error) {
-    console.error("Error while booking appointment:", error);
+    console.error("Error mientras la cita era reservada:", error);
     return {
       success: false,
-      message: "Network error. Please try again later."
+      message: "Error en la red. Reintente mas tarde."
     };
   }
 }
@@ -50,13 +50,13 @@ export async function updateAppointment(appointment, token) {
     const data = await response.json();
     return {
       success: response.ok,
-      message: data.message || "Something went wrong"
+      message: data.message || "Ocurrio un error al actualizar la cita"
     };
   } catch (error) {
-    console.error("Error while booking appointment:", error);
+    console.error("Error mientras la cita era reservada:", error);
     return {
       success: false,
-      message: "Network error. Please try again later."
+      message: "Error en la red. Intente mas tarde"
     };
   }
 }
