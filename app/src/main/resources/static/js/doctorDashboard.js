@@ -45,7 +45,7 @@ async function loadAppointments() {
     tableBody.innerHTML = "";
 
     if (!appointments || appointments.length === 0) {
-      tableBody.innerHTML = `<tr><td colspan="5" class="noPatientRecord">No Appointments found for selected date.</td></tr>`;
+      tableBody.innerHTML = `<tr><td colspan="5" class="noPatientRecord">Citas no localizadas para la fecha seleccionada.</td></tr>`;
       return;
     }
 
@@ -60,8 +60,8 @@ async function loadAppointments() {
       tableBody.appendChild(row);
     });
   } catch (err) {
-    console.error("Error loading appointments:", err);
-    tableBody.innerHTML = `<tr><td colspan="5" class="noPatientRecord">Error loading appointments. Try again later.</td></tr>`;
+    console.error("Error al cargar las citas:", err);
+    tableBody.innerHTML = `<tr><td colspan="5" class="noPatientRecord">Error al cargar las citas. Intente mas tarde.</td></tr>`;
   }
 }
 
