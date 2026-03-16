@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Doctor Dashboard</title>
+    <title>Tablero del doctor</title>
     <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />
 
     <!-- CSS Stylesheets -->
@@ -33,11 +33,11 @@
                 <h1>Doctor Dashboard</h1>
 
                 <!-- Search Bar -->
-                <input type="text" id="searchBar" class="searchBar" placeholder="Search Bar for custom output" />
+                <input type="text" id="searchBar" class="searchBar" placeholder="Barra de busqueda para salida personalizada" />
 
                 <!-- Filter Controls -->
                 <div class="filters">
-                    <button id="todayButton" class="dashboard-btn">Today’s Appointments</button>
+                    <button id="todayButton" class="dashboard-btn">Citas para hoy</button>
                     <input type="date" id="datePicker" class="date-filter" />
                 </div>
 
@@ -45,11 +45,11 @@
                 <table class="patient-table">
                     <thead>
                         <tr>
-                            <th>Patient ID</th>
-                            <th>Name</th>
-                            <th>Phone No.</th>
+                            <th>ID del paciente</th>
+                            <th>Nombre</th>
+                            <th>Mobil</th>
                             <th>Email</th>
-                            <th>Prescription</th>
+                            <th>Receta</th>
                         </tr>
                     </thead>
                     <tbody id="patientTableBody">
