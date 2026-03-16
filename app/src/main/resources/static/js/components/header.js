@@ -32,7 +32,7 @@ export function renderHeader() {
   if ((role === "loggedPatient" || role === "admin" || role === "doctor") && !token) {
     localStorage.removeItem("userRole");
     localStorage.removeItem("token");
-    alert("Session expired or invalid login. Please log in again.");
+    alert("Sesion vencida o credencial invalida. Favor de firmarse nuevamente.");
     window.location.href = "/";
     return;
   }
