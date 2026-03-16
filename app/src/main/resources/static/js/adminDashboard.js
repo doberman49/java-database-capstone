@@ -26,7 +26,7 @@ async function loadDoctorCards() {
     const doctors = await getDoctors();
     renderDoctorCards(doctors);
   } catch (err) {
-    console.error("Error loading doctor cards:", err);
+    console.error("Error al cargar las tarjetas del doctor:", err);
   }
 }
 
@@ -45,8 +45,8 @@ async function filterDoctorsOnChange() {
       document.getElementById("content").innerHTML = `<p class="noDoctorMsg">No doctors found with the given filters.</p>`;
     }
   } catch (err) {
-    console.error("Error filtering doctors:", err);
-    alert("Failed to filter doctors. Please try again.");
+    console.error("Error al filtrar doctores:", err);
+    alert("Falla al filtrar doctores. Intente nuevamente.");
   }
 }
 
@@ -79,7 +79,7 @@ window.adminAddDoctor = async function () {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("Session expired. Please log in again.");
+    alert("Sesion vencida. Firmese nuevamente.");
     window.location.href = "/";
     return;
   }
@@ -97,15 +97,15 @@ window.adminAddDoctor = async function () {
     const result = await saveDoctor(doctor, token);
 
     if (result.success) {
-      alert("Doctor added successfully!");
+      alert("Doctor salvado exitosamente");
       closeModal("addDoctor");
       loadDoctorCards();
     } else {
-      alert(`Failed to add doctor: ${result.message}`);
+      alert(`Falla al salvar al doctor: ${result.message}`);
     }
   } catch (err) {
-    console.error("Error adding doctor:", err);
-    alert("An error occurred. Please try again.");
+    console.error("Error al salvar al doctor:", err);
+    alert("Error inesperado al salvar doctor. Intente nuevamente.");
   }
 };
 
