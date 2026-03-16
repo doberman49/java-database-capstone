@@ -17,7 +17,7 @@ async function initializePage() {
 
   console.log(doctorId)
   if (!token || !patientId) {
-    alert("Missing session data, redirecting to appointments page.");
+    alert("Datos perdidos de la sesion, redirijase a la pagina de citas.");
     window.location.href = "/pages/patientAppointments.html";
     return;
   }
@@ -28,7 +28,7 @@ async function initializePage() {
       // Find the doctor by the ID from the URL
       const doctor = doctors.find(d => d.id == doctorId);
       if (!doctor) {
-        alert("Doctor not found.");
+        alert("Doctor no localizado.");
         return;
       }
 
@@ -54,7 +54,7 @@ async function initializePage() {
         const time = document.getElementById("appointmentTime").value;
         const startTime = time.split('-')[0];
         if (!date || !time) {
-          alert("Please select both date and time.");
+          alert("Seleccione fecha y hora.");
           return;
         }
 
@@ -72,12 +72,12 @@ async function initializePage() {
           alert("Appointment updated successfully!");
           window.location.href = "/pages/patientAppointments.html"; // Redirect back to the appointments page
         } else {
-          alert("❌ Failed to update appointment: " + updateResponse.message);
+          alert("❌ Falla al actualizar la cita: " + updateResponse.message);
         }
       });
     })
     .catch(error => {
-      console.error("Error fetching doctors:", error);
-      alert("❌ Failed to load doctor data.");
+      console.error("Error al recuperar doctores:", error);
+      alert("❌ Falla al cargar los datos del doctor.");
     });
 }
