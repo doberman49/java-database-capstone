@@ -27,7 +27,7 @@ window.adminLoginHandler = async function () {
   const password = document.getElementById("adminPassword")?.value;
 
   if (!username || !password) {
-    alert("Please enter both username and password.");
+    alert("Introduzca nombre de usuario y contrasena.");
     return;
   }
 
@@ -43,7 +43,7 @@ window.adminLoginHandler = async function () {
     });
 
     if (!response.ok) {
-      alert("Invalid admin credentials.");
+      alert("Credenciales invalidas del administrador.");
       return;
     }
 
@@ -53,8 +53,8 @@ window.adminLoginHandler = async function () {
 
     selectRole("admin");
   } catch (error) {
-    console.error("Admin login failed:", error);
-    alert("An error occurred. Please try again later.");
+    console.error("Firma del administrador fallida:", error);
+    alert("Error inesperado al firmar al administrador. Intente mas tarde.");
   }
 };
 
@@ -64,7 +64,7 @@ window.doctorLoginHandler = async function () {
   const password = document.getElementById("doctorPassword")?.value;
 
   if (!email || !password) {
-    alert("Please enter both email and password.");
+    alert("Introduzca email y contrasena.");
     return;
   }
 
@@ -80,7 +80,7 @@ window.doctorLoginHandler = async function () {
     });
 
     if (!response.ok) {
-      alert("Invalid doctor credentials.");
+      alert("Credenciales invalidas del doctor.");
       return;
     }
 
@@ -90,8 +90,8 @@ window.doctorLoginHandler = async function () {
 
     selectRole("doctor");
   } catch (error) {
-    console.error("Doctor login failed:", error);
-    alert("An error occurred. Please try again later.");
+    console.error("Firma del doctor fallida:", error);
+    alert("Error inesperado al firmar al doctor. Intente mas tarde.");
   }
 };
 
