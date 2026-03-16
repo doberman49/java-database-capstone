@@ -72,13 +72,13 @@ function filterDoctorsOnChange() {
           contentDiv.appendChild(card);
         });
       } else {
-        contentDiv.innerHTML = "<p>No doctors found with the given filters.</p>";
+        contentDiv.innerHTML = "<p>Doctores no localizados para el filtro proporcionado.</p>";
         console.log("Nothing");
       }
     })
     .catch(error => {
-      console.error("Failed to filter doctors:", error);
-      alert("❌ An error occurred while filtering doctors.");
+      console.error("Falla al filtrar los doctores:", error);
+      alert("❌ Error occurrido mientras los doctores eran filtrados.");
     });
 }
 
@@ -99,8 +99,8 @@ window.signupPatient = async function () {
     }
     else alert(message);
   } catch (error) {
-    console.error("Signup failed:", error);
-    alert("❌ An error occurred while signing up.");
+    console.error("Firma fallida del paciente:", error);
+    alert("❌ Error ocurrido mientras se firmaba el paciente.");
   }
 };
 
@@ -128,7 +128,7 @@ window.loginPatient = async function () {
     }
   }
   catch (error) {
-    alert("❌ Failed to Login : ", error);
+    alert("❌ Falla al firmar al paciente : ", error);
     console.log("Error :: loginPatient :: ", error)
   }
 }
