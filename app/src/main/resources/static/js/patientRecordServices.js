@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", initializePage);
 
 async function initializePage() {
   try {
-    if (!token) throw new Error("No token found");
+    if (!token) throw new Error("Token no localizado");
 
     const appointmentData = await getPatientAppointments(patientId, token, "doctor") || [];
 
@@ -23,8 +23,8 @@ async function initializePage() {
     console.log(filteredAppointments)
     renderAppointments(filteredAppointments);
   } catch (error) {
-    console.error("Error loading appointments:", error);
-    alert("❌ Failed to load your appointments.");
+    console.error("Error al cargar las citas:", error);
+    alert("❌ Falla al cargar estas citas.");
   }
 }
 
@@ -37,7 +37,7 @@ function renderAppointments(appointments) {
   }
 
   if (!appointments.length) {
-    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No Appointments Found</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Citas no localizadas</td></tr>`;
     return;
   }
 
