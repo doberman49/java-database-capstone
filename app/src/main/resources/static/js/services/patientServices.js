@@ -49,7 +49,7 @@ export async function getPatientData(token) {
     if (response.ok) return data.patient;
     return null;
   } catch (error) {
-    console.error("Error fetching patient details:", error);
+    console.error("Error al recuperar los detalles del paciente:", error);
     return null;
   }
 }
@@ -66,7 +66,7 @@ export async function getPatientAppointments(id, token, user) {
     return null;
   }
   catch (error) {
-    console.error("Error fetching patient details:", error);
+    console.error("Error al recuperar los detalles del paciente:", error);
     return null;
   }
 }
@@ -85,13 +85,13 @@ export async function filterAppointments(condition, name, token) {
       return data;
 
     } else {
-      console.error("Failed to fetch doctors:", response.statusText);
+      console.error("Error al recuperar a los doctores:", response.statusText);
       return { appointments: [] };
 
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("Something went wrong!");
+    alert("Error inesperado al filtrar citas");
     return { appointments: [] };
   }
 }
