@@ -24,24 +24,24 @@
             <div id="header"></div>
             <div class="main-content">
                 <div class="form-container">
-                    <h2 id="heading">Add <span>Prescription</span></h2>
+                    <h2 id="heading">Add <span>Receta</span></h2>
                     <form>
-                        <label for="patientName">Patient Name</label>
+                        <label for="patientName">Nombre del paciente</label>
                         <input type="text" id="patientName" disabled>
 
-                        <label for="medicines">Medicine Names</label>
-                        <input type="text" id="medicines" placeholder="e.g. Paracetamol, Vitamin C" required>
+                        <label for="medicines">Nombre de las medicinas</label>
+                        <input type="text" id="medicines" placeholder="v.g.r. Paracetamol, Vitamina C" required>
 
-                        <label for="dosage">Dosage Instructions</label>
+                        <label for="dosage">Instrucciones de la dosis</label>
                         <textarea id="dosage" rows="3"
                             placeholder="e.g - Paracetamol"></textarea>
 
-                        <label for="notes">Additional Notes</label>
+                        <label for="notes">Notas adicionales</label>
                         <textarea id="notes" rows="3"
                             placeholder="Any precautions or observations (optional)"></textarea>
 
-                        <button type="submit" class="btn-primary" id="savePrescription">Add Prescription</button>
-                        <button type="button" onclick="selectRole('doctor')" class="btn-secondary">Cancel</button>
+                        <button type="submit" class="btn-primary" id="savePrescription">Añadir receta</button>
+                        <button type="button" onclick="selectRole('doctor')" class="btn-secondary">Cancelar</button>
                     </form>
                 </div>
             </div>
