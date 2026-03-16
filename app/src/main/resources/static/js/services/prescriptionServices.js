@@ -31,8 +31,8 @@ export async function getPrescription(appointmentId, token) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Failed to fetch prescription:", errorData);
-      throw new Error(errorData.message || "Unable to fetch prescription");
+      console.error("Error al recuperar la receta:", errorData);
+      throw new Error(errorData.message || "Dificultades para recuperar la receta");
     }
 
     const result = await response.json();
