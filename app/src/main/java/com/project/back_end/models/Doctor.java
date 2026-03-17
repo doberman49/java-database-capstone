@@ -19,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
-@Table(name = "doctors")
+@Table(name = "doctor_dt")
 public class Doctor {
 
 // @Entity annotation:
@@ -108,7 +108,7 @@ public class Doctor {
 //      - The @ElementCollection annotation ensures that the list of time slots is stored as a separate collection in the database.
 
       @ElementCollection
-      @CollectionTable(name = "doctor_available_times", joinColumns = @JoinColumn(name = "doctor_id"))
+      @CollectionTable(name = "doctor_available_times_dt", joinColumns = @JoinColumn(name = "doctor_id"))
       @Column(name = "time_slot")
       private List<String> availableTimes; // franjas horarias disponibles, v.g.r. "09:00 - 10:00"
 
