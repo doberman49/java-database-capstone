@@ -19,7 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Future;
 
 @Entity
-@Table(name = "appointments")
+@Table(name = "appointment_dt")
 public class Appointment {
 
   // @Entity annotation:
